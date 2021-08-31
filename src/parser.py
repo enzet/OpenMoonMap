@@ -26,9 +26,9 @@ def parse(input_path: Path, output_path: Path) -> None:
         volcano_data: dict[int, float] = {}
         for record in json.load(input_file)["results"]["bindings"]:
             item: re.Match = ITEM_PATTERN.match(record["item"]["value"])
-            volcano_data[int(item.group("id"))] = float(
-                record["diameter"]["value"]
-            ) * 1000
+            volcano_data[int(item.group("id"))] = (
+                float(record["diameter"]["value"]) * 1000
+            )
 
     with output_path.open("w+") as output_file:
         output_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
@@ -50,7 +50,7 @@ def parse(input_path: Path, output_path: Path) -> None:
                 f'lat="{latitude}" lon="{geo.group("longitude")}">\n'
             )
             tags: dict[str, str] = {
-                "wikidata": f'Q{wikidata_id}',
+                "wikidata": f"Q{wikidata_id}",
                 "name": record["itemLabel"]["value"],
                 "name:en": record["itemLabel"]["value"],
             }
@@ -59,9 +59,7 @@ def parse(input_path: Path, output_path: Path) -> None:
                 tags["diameter"] = str(volcano_data[wikidata_id])
 
             for key, value in tags.items():
-                output_file.write(
-                    f'  <tag k="{key}" v="{value}"/>\n'
-                )
+                output_file.write(f'  <tag k="{key}" v="{value}"/>\n')
             output_file.write(" </node>\n")
         with Path("work/spacecraft.osm").open() as osm_file:
             output_file.write(osm_file.read())

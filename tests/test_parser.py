@@ -15,5 +15,3 @@ def test() -> None:
     )
     assert geo_matcher.group("latitude") == "176.5"
     assert geo_matcher.group("longitude") == "7.0"
-
-

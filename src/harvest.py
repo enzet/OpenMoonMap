@@ -10,5 +10,5 @@ def harvest(request_path: Path, output_path: Path) -> None:
             output_file.write(request_sparql(request_file.read()))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     harvest(Path(sys.argv[1]), Path(sys.argv[2]))
