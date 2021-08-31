@@ -1,0 +1,7 @@
+SELECT ?item ?diameter
+WHERE {
+  ?item wdt:P376 wd:Q405;
+        wdt:P31/wdt:P279* wd:Q3240715;
+        wdt:P2386 ?diameter;
+        wdt:P625 ?geo.
+}
