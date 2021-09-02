@@ -4,7 +4,13 @@ Wikidata-specific data.
 import logging
 import urllib3
 
+__author__ = "Sergey Vartanov"
+__email__ = "me@enzet.ru"
+
+MARS: int = 111
+MOON: int = 405
 VOLCANO: int = 8072
+MOUNTAIN: int = 8502
 IMPACT_CRATER: int = 55818
 METEORITE: int = 60186
 GEOGRAPHIC_REGION: int = 82794
@@ -29,6 +35,12 @@ MONUMENT: int = 4989906
 LUNAR_IMPACT: int = 16643332
 SATELLITE_CRATER: int = 101142982
 
+INSTANCE_OF: int = 31
+SUBCLASS_OF: int = 279
+LOCATED_ON_ASTRONOMICAL_BODY: int = 376
+COORDINATE_LOCATION: int = 625
+DIAMETER: int = 2386
+
 
 def wikidata_item_to_osm_tags(wikidata_id: int) -> dict[str, str]:
     """Convert Wikidata item into OpenStreetMap tags dictionary."""
@@ -36,13 +48,50 @@ def wikidata_item_to_osm_tags(wikidata_id: int) -> dict[str, str]:
         return {"natural": "volcano"}
     if wikidata_id in [CRATER, SATELLITE_CRATER, LUNAR_CRATER, IMPACT_CRATER]:
         return {"natural": "crater"}
-    if wikidata_id == MONS:
+    if wikidata_id in [MOUNTAIN, MONS]:
         return {"natural": "peak"}
     if wikidata_id == MONUMENT:
         return {"historic": "monument"}
     if wikidata_id == SCULPTURE:
         return {"tourism": "artwork", "artwork_type": "sculpture"}
     return {}
+
+
+def get_object_query(astronomical_object_wikidata_id: int) -> str:
+    """
+    Get a SPARQL query for every object that has coordinates and is located on
+    the astronomical body with specified Wikidata id.
+
+    Query response:
+        item: object Wikidata id
+        itemLabel: object English label
+        geo: location coordinates on the astronomical body
+        type: object type
+    """
+    return f"""SELECT ?item ?geo ?type ?itemLabel
+WHERE {{
+    ?item wdt:P{LOCATED_ON_ASTRONOMICAL_BODY}
+              wd:Q{astronomical_object_wikidata_id};
+          wdt:P{COORDINATE_LOCATION} ?geo;
+          wdt:P{INSTANCE_OF} ?type.
+    SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}"""
+
+
+def get_object_property_query(
+    astronomical_object_wikidata_id: int,
+    should_be_instance_of: int,
+    property_wikidata_id: int,
+    property_field: str,
+) -> str:
+    return f"""SELECT ?item ?{property_field}
+WHERE {{
+    ?item wdt:P{LOCATED_ON_ASTRONOMICAL_BODY}
+              wd:Q{astronomical_object_wikidata_id};
+          wdt:P{INSTANCE_OF}/wdt:P{SUBCLASS_OF}* wd:Q{should_be_instance_of};
+          wdt:P{property_wikidata_id} ?{property_field};
+          wdt:P{COORDINATE_LOCATION} ?geo.
+}}"""
 
 
 def request_sparql(query: str) -> bytes:
@@ -53,6 +102,7 @@ def request_sparql(query: str) -> bytes:
     :param query: SPARQL query
     """
     http = urllib3.PoolManager()
+    logging.info("Request Wikidata...")
     return http.request(
         "GET",
         "https://query.wikidata.org/sparql",

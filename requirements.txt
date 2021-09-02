@@ -1,1 +1,4 @@
-roentgen-map~=0.1
+roentgen-map~=0.1.0
+numpy~=1.21.2
+logging~=0.4.9.6
+urllib3~=1.26.6
