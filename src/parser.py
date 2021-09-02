@@ -32,8 +32,15 @@ GEO_PATTERN: re.Pattern = re.compile(
 )
 
 
-def request(cache: Path, query: str, name: str) -> dict:
-    cache_file_path: Path = cache / f"{name}.json"
+def request(cache_path: Path, query: str, name: str) -> dict:
+    """
+    Request data from Wikidata using SPARQL query.
+
+    :param cache_path: path to storage for query results
+    :param query: SPARQL query
+    :param name: query identifier
+    """
+    cache_file_path: Path = cache_path / f"{name}.json"
     if cache_file_path.exists():
         with cache_file_path.open() as cache_file:
             return json.load(cache_file)
@@ -49,6 +56,9 @@ def main(
     """
     Parse Wikidata SPARQL query result and construct OSM XML file.
 
+    :param cache_path: path to storage for query results
+    :param body_name: astronomical body string identifier
+    :param body_wikidata_id: astronomical body Wikidata identifier
     :param output_path: path to output OSM XML file
     """
     object_data: dict = request(
@@ -83,7 +93,6 @@ def main(
         geo: re.Match = GEO_PATTERN.match(record["geo"]["value"])
         latitude: float = float(geo.group("latitude"))
         if not (-MAX_LATITUDE <= latitude <= MAX_LATITUDE):
-            print(latitude, wikidata_id)
             continue
         longitude: float = float(geo.group("longitude"))
         if longitude > 180:
@@ -126,9 +135,7 @@ def main(
             node: OSMNode
             output_file.write(
                 f' <node id="{node.id_}" '
-                f'lat="{node.coordinates[0]}" lon="{node.coordinates[1]}" '
-                f'visible="true" user="Test" uid="0" changeset="0" '
-                f'timestamp="2000-01-01T00:00:00Z">\n'
+                f'lat="{node.coordinates[0]}" lon="{node.coordinates[1]}">\n'
             )
             for key, value in node.tags.items():
                 output_file.write(f'  <tag k="{key}" v="{value}"/>\n')
