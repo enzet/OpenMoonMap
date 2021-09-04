@@ -6,8 +6,8 @@ import logging
 import sys
 from pathlib import Path
 
-from src.parser import main
-from src.ui import parse_arguments
+from osm_xml import main
+from ui import parse_arguments
 
 
 if __name__ == "__main__":

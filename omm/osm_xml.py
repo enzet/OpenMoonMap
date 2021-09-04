@@ -10,7 +10,7 @@ from typing import Callable
 import numpy as np
 from roentgen.osm_reader import OSMNode
 
-from src.wikidata import (
+from wikidata import (
     CRATER,
     DIAMETER,
     get_object_property_query,
