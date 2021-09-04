@@ -84,6 +84,9 @@ def get_object_property_query(
     property_wikidata_id: int,
     property_field: str,
 ) -> str:
+    """
+    Get some property of objects located on the specified astronomical body.
+    """
     return f"""SELECT ?item ?{property_field}
 WHERE {{
     ?item wdt:P{LOCATED_ON_ASTRONOMICAL_BODY}
@@ -107,4 +110,13 @@ def request_sparql(query: str) -> bytes:
         "GET",
         "https://query.wikidata.org/sparql",
         {"format": "json", "query": query},
+    ).data
+
+
+def get_wikidata_item(wikidata_id: int) -> bytes:
+    """Get Wikidata item structure."""
+    http = urllib3.PoolManager()
+    return http.request(
+        "GET",
+        f"https://www.wikidata.org/wiki/Special:EntityData/Q{wikidata_id}.json",
     ).data
