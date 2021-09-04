@@ -1,7 +1,0 @@
-SELECT ?item ?geo ?type ?itemLabel
-WHERE {
-  ?item wdt:P376 wd:Q405.
-  ?item wdt:P625 ?geo.
-  ?item wdt:P31 ?type.
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
-}
