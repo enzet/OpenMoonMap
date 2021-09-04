@@ -2,8 +2,10 @@
 Parse Wikidata SPARQL query result.
 """
 import json
+import logging
 import re
 from pathlib import Path
+from typing import Callable
 
 import numpy as np
 from roentgen.osm_reader import OSMNode
@@ -20,7 +22,7 @@ from src.wikidata import (
 __author__ = "Sergey Vartanov"
 __email__ = "me@enzet.ru"
 
-MAX_LATITUDE: float = 85.0
+MAX_LATITUDE: float = 80.0
 MAX_LONGITUDE: float = 180.0
 
 ITEM_PATTERN: re.Pattern = re.compile(
@@ -32,46 +34,51 @@ GEO_PATTERN: re.Pattern = re.compile(
 )
 
 
-def request(cache_path: Path, query: str, name: str) -> dict:
+def get_data(cache_path: Path, function: Callable, argument: str) -> bytes:
     """
-    Request data from Wikidata using SPARQL query.
-
-    :param cache_path: path to storage for query results
-    :param query: SPARQL query
-    :param name: query identifier
+    Get some data from the cache if cache file exists, otherwise get it using
+    function and store it to the cache.
     """
-    cache_file_path: Path = cache_path / f"{name}.json"
-    if cache_file_path.exists():
-        with cache_file_path.open() as cache_file:
-            return json.load(cache_file)
-    data: bytes = request_sparql(query)
-    with cache_file_path.open("wb") as cache_file:
-        cache_file.write(data)
-    return json.loads(data.decode())
+    if cache_path.exists():
+        with cache_path.open("rb") as input_file:
+            return input_file.read()
+    logging.info(f"Request {cache_path}.")
+    data: bytes = function(argument)
+    with cache_path.open("wb") as output_file:
+        output_file.write(data)
+    return data
 
 
 def main(
-    cache_path: Path, body_name: str, body_wikidata_id: int, output_path: Path
+    cache_path: Path,
+    body_wikidata_id: int,
+    output_path: Path,
+    extra: list[Path],
 ) -> None:
     """
     Parse Wikidata SPARQL query result and construct OSM XML file.
 
     :param cache_path: path to storage for query results
-    :param body_name: astronomical body string identifier
     :param body_wikidata_id: astronomical body Wikidata identifier
     :param output_path: path to output OSM XML file
     """
-    object_data: dict = request(
-        cache_path, get_object_query(body_wikidata_id), f"{body_name}_object"
+    object_data: dict = json.loads(
+        get_data(
+            cache_path / f"{body_wikidata_id}_object.json",
+            request_sparql,
+            get_object_query(body_wikidata_id),
+        ).decode()
     )["results"]["bindings"]
 
     volcano_data: dict[int, float] = {}
-    for record in request(
-        cache_path,
-        get_object_property_query(
-            body_wikidata_id, CRATER, DIAMETER, "diameter"
-        ),
-        f"{body_name}_crater",
+    for record in json.loads(
+        get_data(
+            cache_path / f"{body_wikidata_id}_crater.json",
+            request_sparql,
+            get_object_property_query(
+                body_wikidata_id, CRATER, DIAMETER, "diameter"
+            ),
+        ).decode()
     )["results"]["bindings"]:
         item: re.Match = ITEM_PATTERN.match(record["item"]["value"])
         volcano_data[int(item.group("id"))] = (
@@ -114,15 +121,16 @@ def main(
         id_ += 1
         processed.add(wikidata_id)
 
-    with Path("work/spacecraft.json").open() as jsom_file:
-        for record in json.load(jsom_file):
-            node: OSMNode = OSMNode(
-                record["tags"],
-                id_,
-                np.array((record["lat"], record["lon"])),
-            )
-            nodes.append(node)
-            id_ += 1
+    for extra_path in extra:
+        with extra_path.open() as jsom_file:
+            for record in json.load(jsom_file):
+                node: OSMNode = OSMNode(
+                    record["tags"],
+                    id_,
+                    np.array((record["lat"], record["lon"])),
+                )
+                nodes.append(node)
+                id_ += 1
 
     with output_path.open("w+") as output_file:
         output_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')

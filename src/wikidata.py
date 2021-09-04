@@ -1,7 +1,6 @@
 """
 Wikidata-specific data.
 """
-import logging
 import urllib3
 
 __author__ = "Sergey Vartanov"
@@ -104,19 +103,16 @@ def request_sparql(query: str) -> bytes:
 
     :param query: SPARQL query
     """
-    http = urllib3.PoolManager()
-    logging.info("Request Wikidata...")
-    return http.request(
+    return urllib3.PoolManager().request(
         "GET",
         "https://query.wikidata.org/sparql",
         {"format": "json", "query": query},
-    ).data
+    ).data  # fmt: skip
 
 
-def get_wikidata_item(wikidata_id: int) -> bytes:
+def get_wikidata_item(wikidata_id: str) -> bytes:
     """Get Wikidata item structure."""
-    http = urllib3.PoolManager()
-    return http.request(
+    return urllib3.PoolManager().request(
         "GET",
         f"https://www.wikidata.org/wiki/Special:EntityData/Q{wikidata_id}.json",
-    ).data
+    ).data  # fmt: skip
