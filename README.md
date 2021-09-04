@@ -20,22 +20,27 @@ pip install -r requirements.txt
 Get your own open Moon map
 --------------------------
 
-Request objects on the surface of the Moon (Wikidata id Q405) Wikidata through
-SPARQL, parse results into an OSM XML file `moon.osm` file.
+![Preview](doc/moon.png)
+
+### Construct OSM XML file ###
+
+Request objects on the surface of the Moon (Wikidata id
+[Q405](https://www.wikidata.org/wiki/Q405)) Wikidata through SPARQL, parse
+results into an OSM XML file `moon.osm` file.
 
 ```bash
 python omm --body 405 --output moon.osm
 ```
 
-### Draw SVG map ###
+### Draw map with Röntgen ###
+
+Using Röntgen one can draw SVG map `moon.svg`:
 
 ```bash
 roentgen render --input moon.osm --output moon.svg --zoom-level 2
 ```
 
-or
-
-### Run tile server ###
+or construct tiles for interactive map and run it:
 
 1. Draw tiles for zoom levels 0—4: `roentgen tile -i moon.osm -z 0-4`.
 2. Run Röntgen tile server: `roentgen server`.
