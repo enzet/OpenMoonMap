@@ -14,27 +14,23 @@ Install
 **Requirements**: Python 3.9.
 
 ```bash
-pip install -r requirements
+pip install -r requirements.txt
 ```
 
 Get your own open Moon map
 --------------------------
 
-Request Wikidata through SPARQL and parse results:
+Request objects on the surface of the Moon (Wikidata id Q405) Wikidata through
+SPARQL, parse results into an OSM XML file `moon.osm` file.
 
 ```bash
-python main.py
+python omm --body 405 --output moon.osm
 ```
-
-OSM XML file will be written into `moon.osm` file.
 
 ### Draw SVG map ###
 
 ```bash
-roentgen render \
-    --input moon.osm \
-    --output moon.svg \
-    --zoom-level 2
+roentgen render --input moon.osm --output moon.svg --zoom-level 2
 ```
 
 or
