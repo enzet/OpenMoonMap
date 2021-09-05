@@ -54,7 +54,7 @@ Process other astronomical bodies
 ---------------------------------
 
 The same process can be done for other astronomical bodies.  To do so one
-should know its Wikidata identifier and equator-length.
+should know its Wikidata identifier and equator length.
 
 Example for Mars (Wikidata id [Q111](https://www.wikidata.org/wiki/Q111)):
 

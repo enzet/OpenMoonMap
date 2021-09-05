@@ -10,6 +10,7 @@ MARS: int = 111
 MOON: int = 405
 VOLCANO: int = 8072
 MOUNTAIN: int = 8502
+EQUATOR: int = 23538
 IMPACT_CRATER: int = 55818
 METEORITE: int = 60186
 GEOGRAPHIC_REGION: int = 82794
@@ -37,7 +38,9 @@ SATELLITE_CRATER: int = 101142982
 INSTANCE_OF: int = 31
 SUBCLASS_OF: int = 279
 LOCATED_ON_ASTRONOMICAL_BODY: int = 376
+APPLIES_TO_PART: int = 518
 COORDINATE_LOCATION: int = 625
+RADIUS: int = 2120
 DIAMETER: int = 2386
 
 
@@ -54,6 +57,34 @@ def wikidata_item_to_osm_tags(wikidata_id: int) -> dict[str, str]:
     if wikidata_id == SCULPTURE:
         return {"tourism": "artwork", "artwork_type": "sculpture"}
     return {}
+
+
+class WikidataItem:
+    def __init__(self, wikidata_id: int, data: dict) -> None:
+        self.data: dict = data["entities"][f"Q{wikidata_id}"]
+
+    def get_label(self, language: str = "en") -> str:
+        return self.data["labels"][language]["value"]
+
+    def get_equator_radius(self) -> float:
+        radius: float = 0
+        for radius_structure in self.data["claims"][f"P{RADIUS}"]:
+            if (
+                radius_structure["qualifiers"][f"P{APPLIES_TO_PART}"][0][
+                    "datavalue"
+                ]["value"]["numeric-id"]
+                == EQUATOR
+            ):
+                radius = (
+                    float(
+                        radius_structure["mainsnak"]["datavalue"]["value"][
+                            "amount"
+                        ]
+                    )
+                    * 1000.0
+                )
+                break
+        return radius
 
 
 def get_object_query(astronomical_object_wikidata_id: int) -> str:

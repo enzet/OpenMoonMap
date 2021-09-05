@@ -13,8 +13,10 @@ from roentgen.osm_reader import OSMNode
 from wikidata import (
     CRATER,
     DIAMETER,
+    WikidataItem,
     get_object_property_query,
     get_object_query,
+    get_wikidata_item,
     request_sparql,
     wikidata_item_to_osm_tags,
 )
@@ -61,7 +63,19 @@ def main(
     :param cache_path: path to storage for query results
     :param body_wikidata_id: astronomical body Wikidata identifier
     :param output_path: path to output OSM XML file
+    :param extra: list of paths to extra files
     """
+    _: WikidataItem = WikidataItem(
+        body_wikidata_id,
+        json.loads(
+            get_data(
+                cache_path / f"{body_wikidata_id}.json",
+                get_wikidata_item,
+                str(body_wikidata_id),
+            ).decode()
+        ),
+    )
+
     object_data: dict = json.loads(
         get_data(
             cache_path / f"{body_wikidata_id}_object.json",
