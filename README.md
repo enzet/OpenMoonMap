@@ -49,3 +49,15 @@ or construct tiles for interactive map and run it:
 1. Draw tiles for zoom levels 0—4: `roentgen tile -i moon.osm -z 0-4`.
 2. Run Röntgen tile server: `roentgen server`.
 3. Open `data/leaflet.html` in browser.
+
+Process other astronomical bodies
+---------------------------------
+
+The same process can be done for other astronomical bodies.  To do so one
+should know its Wikidata identifier and equator-length.
+
+Example for Mars (Wikidata id [Q111](https://www.wikidata.org/wiki/Q111)):
+
+```bash
+python omm --body 111 --output mars.osm
+```
