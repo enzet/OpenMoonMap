@@ -37,7 +37,11 @@ python omm --body 405 --output moon.osm
 Using Röntgen one can draw SVG map `moon.svg`:
 
 ```bash
-roentgen render --input moon.osm --output moon.svg --zoom-level 2
+roentgen render \
+    --input moon.osm \
+    --output moon.svg \
+    --zoom-level 2 \
+     --equator-length 10917000.0
 ```
 
 or construct tiles for interactive map and run it:
