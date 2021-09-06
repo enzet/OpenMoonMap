@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "Checking code format with Black..."
+if ! black -l 80 --check tests omm; then
+    black -l 80 --diff tests omm 
+    echo "FAIL"
+    exit 1
+fi
+
+echo "Lint with Flake8..."
+flake8 \
+    --max-line-length=80 \
+    --ignore=E203,W503,ANN002,ANN003,ANN101,ANN102 \
+    --exclude=work \
+    || { echo "FAIL"; exit 1; }
