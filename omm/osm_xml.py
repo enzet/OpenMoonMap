@@ -66,7 +66,7 @@ def main(
     :param output_path: path to output OSM XML file
     :param extra: list of paths to extra files
     """
-    _: WikidataItem = WikidataItem(
+    body: WikidataItem = WikidataItem(
         body_wikidata_id,
         json.loads(
             get_data(
@@ -148,8 +148,12 @@ def main(
                 id_ += 1
 
     root: Element = Element("osm")
-    root.attrib["version"] = "0.6"
+    root.set("version", "0.6")
     tree: ElementTree = ElementTree(root)
+
+    object: Element = Element("object")
+    object.set("equator", str(2.0 * np.pi * body.get_equator_radius()))
+    root.append(object)
 
     bounds: Element = Element("bounds")
     bounds.set("minlat", f"-{MAX_LATITUDE}")

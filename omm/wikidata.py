@@ -60,30 +60,46 @@ def wikidata_item_to_osm_tags(wikidata_id: int) -> dict[str, str]:
 
 
 class WikidataItem:
+    """
+    Wikidata item (elements starting with Q).
+    """
+
     def __init__(self, wikidata_id: int, data: dict) -> None:
         self.data: dict = data["entities"][f"Q{wikidata_id}"]
+        self.labels: dict = self.data["labels"]
+        self.claims: dict = self.data["claims"]
+
+    @staticmethod
+    def get_float_value(claim: dict) -> float:
+        """Parse float value from claim."""
+        return float(claim["mainsnak"]["datavalue"]["value"]["amount"])
 
     def get_label(self, language: str = "en") -> str:
-        return self.data["labels"][language]["value"]
+        """Get label of item."""
+        return self.labels[language]["value"]
 
     def get_equator_radius(self) -> float:
+        """
+        Get equator radius or any radius if equator radius is not specified or
+        0 otherwise.
+        """
+        if f"P{RADIUS}" not in self.claims:
+            return 0
+
         radius: float = 0
-        for radius_structure in self.data["claims"][f"P{RADIUS}"]:
+
+        for radius_structure in self.claims[f"P{RADIUS}"]:
+            radius: float = self.get_float_value(radius_structure) * 1000.0
             if (
-                radius_structure["qualifiers"][f"P{APPLIES_TO_PART}"][0][
+                "qualifiers" in radius_structure
+                and f"P{APPLIES_TO_PART}" in radius_structure["qualifiers"]
+                and radius_structure["qualifiers"][f"P{APPLIES_TO_PART}"][0][
                     "datavalue"
                 ]["value"]["numeric-id"]
                 == EQUATOR
             ):
-                radius = (
-                    float(
-                        radius_structure["mainsnak"]["datavalue"]["value"][
-                            "amount"
-                        ]
-                    )
-                    * 1000.0
-                )
-                break
+                return radius
+
         return radius
 
 
