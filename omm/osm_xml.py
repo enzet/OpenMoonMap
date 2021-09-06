@@ -6,6 +6,7 @@ import logging
 import re
 from pathlib import Path
 from typing import Callable
+from xml.etree.ElementTree import Element, ElementTree
 
 import numpy as np
 from roentgen.osm_reader import OSMNode
@@ -146,21 +147,30 @@ def main(
                 nodes.append(node)
                 id_ += 1
 
-    with output_path.open("w+") as output_file:
-        output_file.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-        output_file.write('<osm version="0.6">\n')
-        output_file.write(
-            f' <bounds minlat="-{MAX_LATITUDE}" minlon="-{MAX_LONGITUDE}" '
-            f'maxlat="{MAX_LATITUDE}" maxlon="{MAX_LONGITUDE}"/>\n'
-        )
-        for id_, node in enumerate(nodes):
-            node: OSMNode
-            output_file.write(
-                f' <node id="{node.id_}" '
-                f'lat="{node.coordinates[0]}" lon="{node.coordinates[1]}">\n'
-            )
-            for key, value in node.tags.items():
-                output_file.write(f'  <tag k="{key}" v="{value}"/>\n')
-            output_file.write(" </node>\n")
+    root: Element = Element("osm")
+    root.attrib["version"] = "0.6"
+    tree: ElementTree = ElementTree(root)
 
-        output_file.write("</osm>\n")
+    bounds: Element = Element("bounds")
+    bounds.set("minlat", f"-{MAX_LATITUDE}")
+    bounds.set("minlon", f"-{MAX_LONGITUDE}")
+    bounds.set("maxlat", f"{MAX_LATITUDE}")
+    bounds.set("maxlon", f"{MAX_LONGITUDE}")
+    root.append(bounds)
+
+    for id_, node in enumerate(nodes):
+        node: OSMNode
+        node_element: Element = Element("node")
+        node_element.set("id", str(node.id_))
+        node_element.set("lat", str(node.coordinates[0]))
+        node_element.set("lon", str(node.coordinates[1]))
+
+        for key, value in node.tags.items():
+            tag: Element = Element("tag")
+            tag.set("k", key)
+            tag.set("v", value)
+            node_element.append(tag)
+        root.append(node_element)
+
+    with output_path.open("wb+") as output_file:
+        tree.write(output_file, encoding="UTF-8", xml_declaration=True)
