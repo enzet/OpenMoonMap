@@ -151,9 +151,9 @@ def main(
     root.set("version", "0.6")
     tree: ElementTree = ElementTree(root)
 
-    object: Element = Element("object")
-    object.set("equator", str(2.0 * np.pi * body.get_equator_radius()))
-    root.append(object)
+    object_: Element = Element("object")
+    object_.set("equator", str(2.0 * np.pi * body.get_equator_radius()))
+    root.append(object_)
 
     bounds: Element = Element("bounds")
     bounds.set("minlat", f"-{MAX_LATITUDE}")

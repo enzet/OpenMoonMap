@@ -40,8 +40,7 @@ Using Röntgen one can draw SVG map `moon.svg`:
 roentgen render \
     --input moon.osm \
     --output moon.svg \
-    --zoom-level 2 \
-     --equator-length 10917000.0
+    --zoom-level 2
 ```
 
 or construct tiles for interactive map and run it:
@@ -54,10 +53,16 @@ Process other astronomical bodies
 ---------------------------------
 
 The same process can be done for other astronomical bodies.  To do so one
-should know its Wikidata identifier and equator length.
+should know its Wikidata identifier.
 
 Example for Mars (Wikidata id [Q111](https://www.wikidata.org/wiki/Q111)):
 
 ```bash
 python omm --body 111 --output mars.osm
 ```
+
+OSM XML file extension
+----------------------
+
+Resulting OSM XML file has additional XML element `object` with `equator`
+attribute, that contains object's equator length in meters.
