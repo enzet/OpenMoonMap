@@ -2,7 +2,8 @@ Open Moon Map
 =============
 
 Small research project on using OpenStreetMap XML format to create open map of
-Moon and displaying this data with [Röntgen](https://github.com/enzet/Roentgen).
+Moon and displaying this data with
+[Map Machine](https://github.com/enzet/map-machine).
 
 Idea from
 [Mapping the Moon](https://wiki.openstreetmap.org/wiki/Mapping_the_Moon) wiki
@@ -32,12 +33,12 @@ results into an OSM XML file `moon.osm` file.
 python omm --body 405 --output moon.osm
 ```
 
-### Draw map with Röntgen ###
+### Draw map with Map Machine ###
 
-Using Röntgen one can draw SVG map `moon.svg`:
+Using Map Machine one can draw SVG map `moon.svg`:
 
 ```bash
-roentgen render \
+map-machine render \
     --input moon.osm \
     --output moon.svg \
     --zoom-level 2
@@ -45,8 +46,8 @@ roentgen render \
 
 or construct tiles for interactive map and run it:
 
-1. Draw tiles for zoom levels 0—4: `roentgen tile -i moon.osm -z 0-4`.
-2. Run Röntgen tile server: `roentgen server`.
+1. Draw tiles for zoom levels 0—4: `map-machine tile -i moon.osm -z 0-4`.
+2. Run Map Machine tile server: `map-machine server`.
 3. Open `data/leaflet.html` in browser.
 
 Process other astronomical bodies

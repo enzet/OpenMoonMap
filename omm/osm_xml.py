@@ -9,7 +9,7 @@ from typing import Callable
 from xml.etree.ElementTree import Element, ElementTree
 
 import numpy as np
-from roentgen.osm_reader import OSMNode
+from map_machine.osm_reader import OSMNode
 
 from wikidata import (
     CRATER,
