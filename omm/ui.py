@@ -1,6 +1,6 @@
 import argparse
 
-from wikidata import MOON
+from omm.wikidata import MOON
 
 
 def parse_arguments(arguments: list[str]) -> argparse.Namespace:
