@@ -16,6 +16,8 @@ Install
 
 ```bash
 pip install -r requirements.txt
+pip install git+https://github.com/enzet/map-machine
+pip install .
 ```
 
 Get your own open Moon map
@@ -25,13 +27,15 @@ Get your own open Moon map
 
 ### Construct OSM XML file ###
 
-Request objects on the surface of the Moon (Wikidata id
-[Q405](https://www.wikidata.org/wiki/Q405)) Wikidata through SPARQL, parse
-results into an OSM XML file `moon.osm` file.
+Run
 
 ```bash
-python omm --body 405 --output moon.osm
+omm --body 405 --output moon.osm
 ```
+
+to request objects on the surface of the Moon (Wikidata id
+[Q405](https://www.wikidata.org/wiki/Q405)) Wikidata through SPARQL, and parse
+results into OSM XML file `moon.osm`.
 
 ### Draw map with Map Machine ###
 
@@ -41,7 +45,7 @@ Using Map Machine one can draw SVG map `moon.svg`:
 map-machine render \
     --input moon.osm \
     --output moon.svg \
-    --zoom-level 2
+    --zoom 2
 ```
 
 or construct tiles for interactive map and run it:
