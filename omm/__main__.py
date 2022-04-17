@@ -6,7 +6,7 @@ import logging
 import sys
 from pathlib import Path
 
-from omm.osm_xml import main
+from omm.osm_xml import main as osm_main
 from omm.ui import parse_arguments
 
 
@@ -15,7 +15,7 @@ def main() -> None:
     cache: Path = Path("cache")
     cache.mkdir(parents=True, exist_ok=True)
     arguments: argparse.Namespace = parse_arguments(sys.argv[1:])
-    main(
+    osm_main(
         cache,
         arguments.body,
         Path(arguments.output),
