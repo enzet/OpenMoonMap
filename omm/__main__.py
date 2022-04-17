@@ -6,11 +6,11 @@ import logging
 import sys
 from pathlib import Path
 
-from osm_xml import main
-from ui import parse_arguments
+from omm.osm_xml import main
+from omm.ui import parse_arguments
 
 
-if __name__ == "__main__":
+def main() -> None:
     logging.basicConfig(format="%(levelname)s %(message)s", level=logging.INFO)
     cache: Path = Path("cache")
     cache.mkdir(parents=True, exist_ok=True)
@@ -21,3 +21,8 @@ if __name__ == "__main__":
         Path(arguments.output),
         map(Path, arguments.extra) if arguments.extra else [],
     )
+
+
+
+if __name__ == "__main__":
+    main()
