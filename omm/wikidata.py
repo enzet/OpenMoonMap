@@ -48,13 +48,13 @@ def wikidata_item_to_osm_tags(wikidata_id: int) -> dict[str, str]:
     """Convert Wikidata item into OpenStreetMap tags dictionary."""
     if wikidata_id == VOLCANO:
         return {"natural": "volcano"}
-    if wikidata_id in [CRATER, SATELLITE_CRATER, LUNAR_CRATER, IMPACT_CRATER]:
+    elif wikidata_id in [CRATER, SATELLITE_CRATER, LUNAR_CRATER, IMPACT_CRATER]:
         return {"natural": "crater"}
-    if wikidata_id in [MOUNTAIN, MONS]:
+    elif wikidata_id in [MOUNTAIN, MONS]:
         return {"natural": "peak"}
-    if wikidata_id == MONUMENT:
+    elif wikidata_id == MONUMENT:
         return {"historic": "monument"}
-    if wikidata_id == SCULPTURE:
+    elif wikidata_id == SCULPTURE:
         return {"tourism": "artwork", "artwork_type": "sculpture"}
     return {}
 
@@ -131,7 +131,7 @@ def get_object_property_query(
     property_field: str,
 ) -> str:
     """
-    Get some property of objects located on the specified astronomical body.
+    Get the specified property of all objects located on the astronomical body.
     """
     return f"""SELECT ?item ?{property_field}
 WHERE {{
