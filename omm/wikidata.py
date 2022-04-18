@@ -46,15 +46,16 @@ DIAMETER: int = 2386
 
 def wikidata_item_to_osm_tags(wikidata_id: int) -> dict[str, str]:
     """Convert Wikidata item into OpenStreetMap tags dictionary."""
+
     if wikidata_id == VOLCANO:
         return {"natural": "volcano"}
-    elif wikidata_id in [CRATER, SATELLITE_CRATER, LUNAR_CRATER, IMPACT_CRATER]:
+    if wikidata_id in [CRATER, SATELLITE_CRATER, LUNAR_CRATER, IMPACT_CRATER]:
         return {"natural": "crater"}
-    elif wikidata_id in [MOUNTAIN, MONS]:
+    if wikidata_id in [MOUNTAIN, MONS]:
         return {"natural": "peak"}
-    elif wikidata_id == MONUMENT:
+    if wikidata_id == MONUMENT:
         return {"historic": "monument"}
-    elif wikidata_id == SCULPTURE:
+    if wikidata_id == SCULPTURE:
         return {"tourism": "artwork", "artwork_type": "sculpture"}
     return {}
 
@@ -114,7 +115,8 @@ def get_object_query(astronomical_object_wikidata_id: int) -> str:
         geo: location coordinates on the astronomical body
         type: object type
     """
-    return f"""SELECT ?item ?geo ?type ?itemLabel
+    return f"""\
+SELECT ?item ?geo ?type ?itemLabel
 WHERE {{
     ?item wdt:P{LOCATED_ON_ASTRONOMICAL_BODY}
               wd:Q{astronomical_object_wikidata_id};
@@ -133,7 +135,8 @@ def get_object_property_query(
     """
     Get the specified property of all objects located on the astronomical body.
     """
-    return f"""SELECT ?item ?{property_field}
+    return f"""\
+SELECT ?item ?{property_field}
 WHERE {{
     ?item wdt:P{LOCATED_ON_ASTRONOMICAL_BODY}
               wd:Q{astronomical_object_wikidata_id};

@@ -1,3 +1,6 @@
+"""
+Argument parsing.
+"""
 import argparse
 
 from omm.wikidata import MOON

@@ -114,12 +114,12 @@ def main(
 
         geo: re.Match = GEO_PATTERN.match(record["geo"]["value"])
         latitude: float = float(geo.group("latitude"))
-        if not (-MAX_LATITUDE <= latitude <= MAX_LATITUDE):
+        if not -MAX_LATITUDE <= latitude <= MAX_LATITUDE:
             continue
         longitude: float = float(geo.group("longitude"))
         if longitude > 180:
             longitude -= 360
-        if not (-MAX_LONGITUDE <= longitude <= MAX_LONGITUDE):
+        if not -MAX_LONGITUDE <= longitude <= MAX_LONGITUDE:
             continue
 
         type_: re.Match = ITEM_PATTERN.match(record["type"]["value"])

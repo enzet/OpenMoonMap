@@ -11,10 +11,13 @@ from omm.ui import parse_arguments
 
 
 def main() -> None:
+    """Run main OpenMoonMap workflow."""
+
     logging.basicConfig(format="%(levelname)s %(message)s", level=logging.INFO)
     cache: Path = Path("cache")
     cache.mkdir(parents=True, exist_ok=True)
     arguments: argparse.Namespace = parse_arguments(sys.argv[1:])
+
     osm_main(
         cache,
         arguments.body,
