@@ -1,4 +1,7 @@
+.coverage
 .idea
+OpenMoonMap.egg-info/
 __pycache__
+build/
 cache
-work
+venv/
