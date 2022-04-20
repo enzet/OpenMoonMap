@@ -63,7 +63,7 @@ should know its Wikidata identifier.
 Example for Mars (Wikidata id [Q111](https://www.wikidata.org/wiki/Q111)):
 
 ```bash
-python omm --body 111 --output mars.osm
+omm --body 111 --output mars.osm
 ```
 
 OSM XML file extension
