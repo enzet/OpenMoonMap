@@ -9,6 +9,9 @@ from pathlib import Path
 from omm.osm_xml import main as osm_main
 from omm.ui import parse_arguments
 
+__author__ = "Sergey Vartanov"
+__email__ = "me@enzet.ru"
+
 
 def main() -> None:
     """Run main OpenMoonMap workflow."""

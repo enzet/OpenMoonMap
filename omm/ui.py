@@ -5,6 +5,9 @@ import argparse
 
 from omm.wikidata import MOON
 
+__author__ = "Sergey Vartanov"
+__email__ = "me@enzet.ru"
+
 
 def parse_arguments(arguments: list[str]) -> argparse.Namespace:
     """Parse command-line arguments."""

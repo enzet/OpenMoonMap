@@ -2,9 +2,12 @@ import re
 
 from omm.osm_xml import GEO_PATTERN, ITEM_PATTERN
 
+__author__ = "Sergey Vartanov"
+__email__ = "me@enzet.ru"
+
 
 def test_item_pattern() -> None:
-    """Test patterns."""
+    """Test Wikidata pattern."""
     item_matcher: re.Match = ITEM_PATTERN.match(
         "http://www.wikidata.org/entity/Q630162"
     )
@@ -12,6 +15,7 @@ def test_item_pattern() -> None:
 
 
 def test_geo_pattern() -> None:
+    """Test geographical coordinates Wikidata value."""
     geo_matcher: re.Match = GEO_PATTERN.match(
         "<http://www.wikidata.org/entity/Q405> Point(176.5 7.0)"
     )
