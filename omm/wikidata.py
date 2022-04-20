@@ -1,61 +1,79 @@
 """
 Wikidata-specific data.
 """
+from enum import Enum
+
 import urllib3
 
 __author__ = "Sergey Vartanov"
 __email__ = "me@enzet.ru"
 
-MARS: int = 111
-MOON: int = 405
-VOLCANO: int = 8072
-MOUNTAIN: int = 8502
-EQUATOR: int = 23538
-IMPACT_CRATER: int = 55818
-METEORITE: int = 60186
-GEOGRAPHIC_REGION: int = 82794
-LUNAR_MARE: int = 180874
-LANDFORM: int = 271669
-MONS: int = 429088
-WRINKLE_RIDGE: int = 667575
-SCULPTURE: int = 860861
-PALUS: int = 948516
-ALBEDO: int = 1051581
-LUNAR_CRATER: int = 1348589
-RILLE: int = 1432092
-VALLIS: int = 2249285
-LAUNCH_LANDING_SITE: int = 2333223
-LUNAR_CIRCUS: int = 2542653
-LACUS: int = 3215913
-CRATER: int = 3240715
-OCEANUS: int = 3880745
-PROMONTORIUM: int = 3922925
-SINUS: int = 3961951
-MONUMENT: int = 4989906
-LUNAR_IMPACT: int = 16643332
-SATELLITE_CRATER: int = 101142982
 
-INSTANCE_OF: int = 31
-SUBCLASS_OF: int = 279
-LOCATED_ON_ASTRONOMICAL_BODY: int = 376
-APPLIES_TO_PART: int = 518
-COORDINATE_LOCATION: int = 625
-RADIUS: int = 2120
-DIAMETER: int = 2386
+class Item(Enum):
+    MARS = 111
+    MOON = 405
+    VOLCANO = 8072
+    MOUNTAIN = 8502
+    EQUATOR = 23538
+    IMPACT_CRATER = 55818
+    METEORITE = 60186
+    GEOGRAPHIC_REGION = 82794
+    LUNAR_MARE = 180874
+    LANDFORM = 271669
+    MONS = 429088
+    WRINKLE_RIDGE = 667575
+    SCULPTURE = 860861
+    PALUS = 948516
+    ALBEDO = 1051581
+    LUNAR_CRATER = 1348589
+    RILLE = 1432092
+    VALLIS = 2249285
+    LAUNCH_LANDING_SITE = 2333223
+    LUNAR_CIRCUS = 2542653
+    LACUS = 3215913
+    CRATER = 3240715
+    OCEANUS = 3880745
+    PROMONTORIUM = 3922925
+    SINUS = 3961951
+    MONUMENT = 4989906
+    LUNAR_IMPACT = 16643332
+    SATELLITE_CRATER = 101142982
+
+    def __repr__(self):
+        return f"Q{self.value}"
+
+    def __str__(self):
+        return f"Q{self.value}"
+
+
+class Property(Enum):
+    INSTANCE_OF = 31
+    SUBCLASS_OF = 279
+    LOCATED_ON_ASTRONOMICAL_BODY = 376
+    APPLIES_TO_PART = 518
+    COORDINATE_LOCATION = 625
+    RADIUS = 2120
+    DIAMETER = 2386
+
+    def __repr__(self):
+        return f"P{self.value}"
+
+    def __str__(self):
+        return f"P{self.value}"
 
 
 def wikidata_item_to_osm_tags(wikidata_id: int) -> dict[str, str]:
     """Convert Wikidata item into OpenStreetMap tags dictionary."""
 
-    if wikidata_id == VOLCANO:
+    if wikidata_id == Item.VOLCANO.value:
         return {"natural": "volcano"}
-    if wikidata_id in [CRATER, SATELLITE_CRATER, LUNAR_CRATER, IMPACT_CRATER]:
+    if wikidata_id in [Item.CRATER.value, Item.SATELLITE_CRATER.value, Item.LUNAR_CRATER.value, Item.IMPACT_CRATER.value]:
         return {"natural": "crater"}
-    if wikidata_id in [MOUNTAIN, MONS]:
+    if wikidata_id in [Item.MOUNTAIN.value, Item.MONS.value]:
         return {"natural": "peak"}
-    if wikidata_id == MONUMENT:
+    if wikidata_id == Item.MONUMENT.value:
         return {"historic": "monument"}
-    if wikidata_id == SCULPTURE:
+    if wikidata_id == Item.SCULPTURE.value:
         return {"tourism": "artwork", "artwork_type": "sculpture"}
     return {}
 
@@ -84,20 +102,20 @@ class WikidataItem:
         Get equator radius or any radius if equator radius is not specified or
         0 otherwise.
         """
-        if f"P{RADIUS}" not in self.claims:
+        if str(Property.RADIUS) not in self.claims:
             return 0
 
         radius: float = 0
 
-        for radius_structure in self.claims[f"P{RADIUS}"]:
+        for radius_structure in self.claims[str(Property.RADIUS)]:
             radius: float = self.get_float_value(radius_structure) * 1000.0
             if (
                 "qualifiers" in radius_structure
-                and f"P{APPLIES_TO_PART}" in radius_structure["qualifiers"]
-                and radius_structure["qualifiers"][f"P{APPLIES_TO_PART}"][0][
+                and str(Property.APPLIES_TO_PART) in radius_structure["qualifiers"]
+                and radius_structure["qualifiers"][str(Property.APPLIES_TO_PART)][0][
                     "datavalue"
                 ]["value"]["numeric-id"]
-                == EQUATOR
+                == Item.EQUATOR.value
             ):
                 return radius
 
@@ -118,18 +136,18 @@ def get_object_query(astronomical_object_wikidata_id: int) -> str:
     return f"""\
 SELECT ?item ?geo ?type ?itemLabel
 WHERE {{
-    ?item wdt:P{LOCATED_ON_ASTRONOMICAL_BODY}
+    ?item wdt:{Property.LOCATED_ON_ASTRONOMICAL_BODY}
               wd:Q{astronomical_object_wikidata_id};
-          wdt:P{COORDINATE_LOCATION} ?geo;
-          wdt:P{INSTANCE_OF} ?type.
+          wdt:{Property.COORDINATE_LOCATION} ?geo;
+          wdt:{Property.INSTANCE_OF} ?type.
     SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
 }}"""
 
 
 def get_object_property_query(
     astronomical_object_wikidata_id: int,
-    should_be_instance_of: int,
-    property_wikidata_id: int,
+    should_be_instance_of: Item,
+    property_wikidata_id: Property,
     property_field: str,
 ) -> str:
     """
@@ -138,11 +156,12 @@ def get_object_property_query(
     return f"""\
 SELECT ?item ?{property_field}
 WHERE {{
-    ?item wdt:P{LOCATED_ON_ASTRONOMICAL_BODY}
+    ?item wdt:{Property.LOCATED_ON_ASTRONOMICAL_BODY}
               wd:Q{astronomical_object_wikidata_id};
-          wdt:P{INSTANCE_OF}/wdt:P{SUBCLASS_OF}* wd:Q{should_be_instance_of};
-          wdt:P{property_wikidata_id} ?{property_field};
-          wdt:P{COORDINATE_LOCATION} ?geo.
+          wdt:{Property.INSTANCE_OF}/wdt:{Property.SUBCLASS_OF}*
+              wd:{should_be_instance_of};
+          wdt:{property_wikidata_id} ?{property_field};
+          wdt:{Property.COORDINATE_LOCATION} ?geo.
 }}"""
 
 

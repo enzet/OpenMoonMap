@@ -12,8 +12,8 @@ import numpy as np
 from map_machine.osm.osm_reader import OSMNode
 
 from omm.wikidata import (
-    CRATER,
-    DIAMETER,
+    Item,
+    Property,
     WikidataItem,
     get_object_property_query,
     get_object_query,
@@ -91,7 +91,7 @@ def main(
             cache_path / f"{body_wikidata_id}_crater.json",
             request_sparql,
             get_object_property_query(
-                body_wikidata_id, CRATER, DIAMETER, "diameter"
+                body_wikidata_id, Item.CRATER, Property.DIAMETER, "diameter"
             ),
         ).decode()
     )["results"]["bindings"]:
