@@ -67,7 +67,12 @@ def wikidata_item_to_osm_tags(wikidata_id: int) -> dict[str, str]:
 
     if wikidata_id == Item.VOLCANO.value:
         return {"natural": "volcano"}
-    if wikidata_id in [Item.CRATER.value, Item.SATELLITE_CRATER.value, Item.LUNAR_CRATER.value, Item.IMPACT_CRATER.value]:
+    if wikidata_id in [
+        Item.CRATER.value,
+        Item.SATELLITE_CRATER.value,
+        Item.LUNAR_CRATER.value,
+        Item.IMPACT_CRATER.value,
+    ]:
         return {"natural": "crater"}
     if wikidata_id in [Item.MOUNTAIN.value, Item.MONS.value]:
         return {"natural": "peak"}
@@ -111,10 +116,11 @@ class WikidataItem:
             radius: float = self.get_float_value(radius_structure) * 1000.0
             if (
                 "qualifiers" in radius_structure
-                and str(Property.APPLIES_TO_PART) in radius_structure["qualifiers"]
-                and radius_structure["qualifiers"][str(Property.APPLIES_TO_PART)][0][
-                    "datavalue"
-                ]["value"]["numeric-id"]
+                and str(Property.APPLIES_TO_PART)
+                in radius_structure["qualifiers"]
+                and radius_structure["qualifiers"][
+                    str(Property.APPLIES_TO_PART)
+                ][0]["datavalue"]["value"]["numeric-id"]
                 == Item.EQUATOR.value
             ):
                 return radius
