@@ -11,7 +11,7 @@ from xml.etree.ElementTree import Element, ElementTree
 import numpy as np
 from map_machine.osm.osm_reader import OSMNode
 
-from omm.wikidata import (
+from openmoonmap.wikidata import (
     Item,
     Property,
     WikidataItem,

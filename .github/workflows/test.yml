@@ -24,7 +24,7 @@ jobs:
         pip install .
     - name: Check code style with Black
       run: |
-        black -l 80 --check omm tests
+        black -l 80 --check openmoonmap tests
     - name: Test with pytest
       run: |
         pytest -v

@@ -3,7 +3,7 @@ from setuptools import setup
 setup(
     name="OpenMoonMap",
     version="0.1",
-    packages=["omm"],
+    packages=["openmoonmap"],
     url="https://github.com/enzet/OpenMoonMap",
     license="",
     author="Sergey Vartanov",
@@ -13,6 +13,6 @@ setup(
         "an open map for Moon"
     ),
     entry_points={
-        "console_scripts": ["omm=omm.__main__:main"],
+        "console_scripts": ["openmoonmap=openmoonmap.__main__:main"],
     },
 )

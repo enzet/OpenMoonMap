@@ -3,14 +3,14 @@ Argument parsing.
 """
 import argparse
 
-from omm.wikidata import Item
+from openmoonmap.wikidata import Item
 
 __author__ = "Sergey Vartanov"
 __email__ = "me@enzet.ru"
 
 
 def parse_arguments(arguments: list[str]) -> argparse.Namespace:
-    """Parse command-line arguments."""
+    """Parse copenmoonmapand-line arguments."""
     parser: argparse.ArgumentParser = argparse.ArgumentParser()
 
     parser.add_argument(

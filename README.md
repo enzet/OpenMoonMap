@@ -30,7 +30,7 @@ Get your own open Moon map
 Run
 
 ```bash
-omm --body 405 --output moon.osm
+openmoonmap --body 405 --output moon.osm
 ```
 
 to request objects on the surface of the Moon (Wikidata id
@@ -63,7 +63,7 @@ should know its Wikidata identifier.
 Example for Mars (Wikidata id [Q111](https://www.wikidata.org/wiki/Q111)):
 
 ```bash
-omm --body 111 --output mars.osm
+openmoonmap --body 111 --output mars.osm
 ```
 
 OSM XML file extension

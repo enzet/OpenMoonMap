@@ -6,8 +6,8 @@ import logging
 import sys
 from pathlib import Path
 
-from omm.osm_xml import main as osm_main
-from omm.ui import parse_arguments
+from openmoonmap.osm_xml import main as osm_main
+from openmoonmap.ui import parse_arguments
 
 __author__ = "Sergey Vartanov"
 __email__ = "me@enzet.ru"
