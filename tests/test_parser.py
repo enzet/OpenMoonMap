@@ -1,6 +1,6 @@
 import re
 
-from omm.osm_xml import GEO_PATTERN, ITEM_PATTERN
+from openmoonmap.osm_xml import GEO_PATTERN, ITEM_PATTERN
 
 __author__ = "Sergey Vartanov"
 __email__ = "me@enzet.ru"
