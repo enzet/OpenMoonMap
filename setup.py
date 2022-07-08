@@ -5,7 +5,12 @@ setup(
     version="0.1",
     packages=["openmoonmap"],
     url="https://github.com/enzet/OpenMoonMap",
-    license="",
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
+    license="MIT",
     author="Sergey Vartanov",
     author_email="me@enzet.ru",
     description=(
